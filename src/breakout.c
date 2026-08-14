@@ -10,6 +10,7 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
+    SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window");
     SetTargetFPS(TARGET_FPS);               // Set our game to run at 60 frames-per-second
 
@@ -33,6 +34,7 @@ int main(void)
     // De-Initialization
     //--------------------------------------------------------------------------------------
     LogoUnload(game); // Unload logo resources
+    free(game->paddle);
     free(game); // Free the allocated memory for Game struct
     CloseWindow();        // Close window and OpenGL context
 

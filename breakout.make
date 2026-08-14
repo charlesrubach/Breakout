@@ -119,12 +119,18 @@ GENERATED :=
 OBJECTS :=
 
 GENERATED += $(OBJDIR)/breakout.o
+GENERATED += $(OBJDIR)/cJSON.o
 GENERATED += $(OBJDIR)/game.o
+GENERATED += $(OBJDIR)/level.o
 GENERATED += $(OBJDIR)/logo.o
+GENERATED += $(OBJDIR)/paddle.o
 GENERATED += $(OBJDIR)/title.o
 OBJECTS += $(OBJDIR)/breakout.o
+OBJECTS += $(OBJDIR)/cJSON.o
 OBJECTS += $(OBJDIR)/game.o
+OBJECTS += $(OBJDIR)/level.o
 OBJECTS += $(OBJDIR)/logo.o
+OBJECTS += $(OBJDIR)/paddle.o
 OBJECTS += $(OBJDIR)/title.o
 
 # Rules
@@ -192,7 +198,16 @@ endif
 $(OBJDIR)/breakout.o: src/breakout.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/cJSON.o: src/cJSON.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/game.o: src/game.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/level.o: src/level.c
+	@echo "$(notdir $<)"
+	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/paddle.o: src/paddle.c
 	@echo "$(notdir $<)"
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/logo.o: src/screens/logo.c

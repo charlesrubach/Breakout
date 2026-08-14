@@ -1,8 +1,13 @@
+#include "level.h"
 #include "raylib.h"
 #include "game.h"
+#include "level.h"
 #include "screens/logo.h" 
 #include "screens/title.h"
 #include "config.h"
+#include "paddle.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void GameInit(Game *game) {
   game->state = SHOW_TITLE;
@@ -19,6 +24,23 @@ void GameInit(Game *game) {
   }
 
   TitleInit(game); // Initialize title resources
+
+    // Initialize paddle
+    game->paddle = (Paddle *)malloc(sizeof(Paddle));
+    if (game->paddle == NULL) {
+        fprintf(stderr, "Failed to allocate memory for Paddle struct\n");
+        WindowShouldClose(); // Close the window if memory allocation fails
+    } else {
+        PaddleInit(game->paddle);
+    }
+
+    game->level = (Level *)malloc(sizeof(Level));
+    if(game->level == NULL) {
+        fprintf(stderr, "Failed to allocate memory for Level struct\n");
+        WindowShouldClose();
+    } else {
+        LoadLevel(game->level, 1);
+    }
 }
 
 bool GameLoop(Game *game) {
@@ -43,6 +65,7 @@ void GameUpdate(Game *game) {
             break;
         case SHOW_GAMEPLAY:
             // Update gameplay logic here
+            PaddleUpdate(game->paddle);
             break;
         case SHOW_ENDING:
             // Update ending screen logic here
@@ -67,7 +90,7 @@ void GameRender(Game *game) {
             TitleRender(game);
             break;
         case SHOW_GAMEPLAY:
-            DrawText("GAMEPLAY SCREEN", 20, 20, 40, LIGHTGRAY);
+            PaddleRender(*game->paddle);
             break;
         case SHOW_ENDING:
             // DrawText("ENDING SCREEN", 20, 20, 40, LIGHTGRAY);
@@ -80,3 +103,4 @@ void GameRender(Game *game) {
 
   //----------------------------------------------------------------------------------
 }
+
