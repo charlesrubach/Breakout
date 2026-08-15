@@ -1,7 +1,7 @@
-#define _POSIX_C_SOURCE 200112L
 #include "level.h"
 #include "cJSON.h"
 #include "game.h"
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -123,7 +123,7 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
 
 bricks:
 //   bricks = cJSON_GetObjectItemCaseSensitive(level, "bricks");
-  bricks = cJSON_GetArrayItem(levels, index);
+  bricks = cJSON_GetArrayItem(levels, 1);
   brickCount = cJSON_GetArraySize(bricks);
 
   // Get all bricks
@@ -132,11 +132,11 @@ bricks:
     cJSON *col;
     cJSON *color;
 
-    brick = cJSON_GetArrayItem(bricks, 0);
+    // brick = cJSON_GetArrayItem(bricks, 0);
 
-    row = cJSON_GetObjectItemCaseSensitive(brick, "row");
-    col = cJSON_GetObjectItemCaseSensitive(brick, "col");
-    color = cJSON_GetObjectItemCaseSensitive(brick, "color");
+    row = cJSON_GetObjectItemCaseSensitive(bricks, "row");
+    col = cJSON_GetObjectItemCaseSensitive(bricks, "col");
+    color = cJSON_GetObjectItemCaseSensitive(bricks, "color");
 
     printf("row %d, col %d, color %s\n", row->valueint, col->valueint, color->valuestring);
 
