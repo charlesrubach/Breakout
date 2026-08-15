@@ -10,6 +10,8 @@
 
 const char *filename = "resources/breakout_levels.json";
 
+static int GetLevel(const char * const breakout_levels);
+
 void LoadLevel(Level *level, int levelNumber)
 {
     // Load breakout_levels.json
@@ -46,4 +48,10 @@ void LoadLevel(Level *level, int levelNumber)
 
     // Always close the file pointer when finished
     fclose(file_ptr);
+
+    GetLevel(buffer);
+}
+
+static int GetLevel(const char * const breakout_levels) {
+
 }
