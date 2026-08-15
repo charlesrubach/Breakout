@@ -8,11 +8,12 @@
 #include <errno.h>
 #endif
 
-const char *filename ="resources/breakout_levels.json";
+const char *filename = "resources/breakout_levels.json";
 
-void LoadLevel(Level *level, int levelNumber) {
+void LoadLevel(Level *level, int levelNumber)
+{
     // Load breakout_levels.json
-    FILE* file_ptr = NULL;
+    FILE *file_ptr = NULL;
 
 #ifdef _WIN32
     errno_t err = fopen_s(&file_ptr, filename, "r");
@@ -21,25 +22,25 @@ void LoadLevel(Level *level, int levelNumber) {
     int err = (file_ptr == NULL) ? errno : 0;
 #endif
 
-
-    if(err != 0) {
+    if (err != 0)
+    {
         // If an error occurred, file_ptr is guaranteed to be NULL
         char err_msg[80];
 
-        #ifdef _WIN32
+#ifdef _WIN32
         strerror_s(err_msg, sizeof(err_msg), err);
-        #else
+#else
         strerror_r(err, err_msg, sizeof(err_msg));
-        #endif
+#endif
 
         fprintf(stderr, "Error opening file: %s (Error code: %d)\n", err_msg, err);
         return;
     }
 
-
-     // Read and print file contents
+    // Read and print file contents
     char buffer[256];
-    while (fgets(buffer, sizeof(buffer), file_ptr) != NULL) {
+    while (fgets(buffer, sizeof(buffer), file_ptr) != NULL)
+    {
         printf("%s", buffer);
     }
 
