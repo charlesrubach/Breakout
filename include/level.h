@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+typedef struct Game Game;
+
 // Level definitions here
 typedef struct Level {
     int levelNumber;
@@ -16,7 +18,7 @@ typedef struct Level {
     Block **blocks; // Pointer to an array of Block pointers
 } Level;
 
-void LoadLevel(Level *level, int levelNumber);
+void LoadLevel(Game *game);
 void UpdateLevel(Level *level);
 void RenderLevel(Level *level);
 
