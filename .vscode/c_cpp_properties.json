@@ -52,13 +52,13 @@
                 "UNICODE",
                 "_UNICODE",
                 "GRAPHICS_API_OPENGL_33",
-                "PLATFORM_DESKTOP"
+                "PLATFORM_DESKTOP",
+                "_POSIX_C_SOURCE=200112L"
             ],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
-
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4
