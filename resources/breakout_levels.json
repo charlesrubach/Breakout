@@ -1,7 +1,7 @@
 {
   "levels": [
     {
-      "sheet": "Level 1",
+      "level": "1",
       "bricks": [
         {
           "row": 0,
@@ -246,7 +246,7 @@
       ]
     },
     {
-      "sheet": "Level 2",
+      "level": "2",
       "bricks": [
         {
           "row": 0,
