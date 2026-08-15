@@ -39,7 +39,8 @@ void GameInit(Game *game) {
         fprintf(stderr, "Failed to allocate memory for Level struct\n");
         WindowShouldClose();
     } else {
-        LoadLevel(game->level, 1);
+        game->level->levelNumber = 1;
+        LoadLevel(game);
     }
 }
 
