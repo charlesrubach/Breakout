@@ -1,9 +1,10 @@
 #include "level.h"
+#include "brick.h"
 #include "cJSON.h"
 #include "config.h"
 #include "game.h"
-#include "brick.h"
 #include "raylib.h"
+
 #define _POSIX_C_SOURCE 200112L
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,14 +20,12 @@ static char *ReadLevelFile(const char *filename);
 static int GetLevel(Game *game, const char *const breakout_levels);
 static Color HexColorStringToColor(char *hex_str);
 
-void LevelLoad(Game *game)
-{
+void LevelLoad(Game *game) {
   // Load breakout_levels.json
 
   char *buffer = ReadLevelFile(json_file);
 
-  if (buffer == NULL)
-  {
+  if (buffer == NULL) {
     fprintf(stderr, "Unable to read the JSON file\n");
     return;
   }
@@ -39,24 +38,24 @@ void LevelLoad(Game *game)
   free(buffer);
 }
 
-void LevelUpdate(Level *level) {
-
-}
+void LevelUpdate(Level *level) {}
 
 void LevelRender(Level *level) {
-  for(int i = 0; i < level->brickCount; i++) {
-    if(level->bricks[i].isActive) {
-      Rectangle brick_rect = (Rectangle){ level->bricks[i].pos.x * level->brick_width,
-                                          level->bricks[i].pos.y * level->brick_height, 100, 50};
+  for (int i = 0; i < level->brickCount; i++) {
+    if (level->bricks[i].isActive) {
+      Rectangle brick_rect =
+          (Rectangle){level->bricks[i].pos.x * level->brick_width,
+                      level->bricks[i].pos.y * level->brick_height,
+                      (float)level->brick_width, (float)level->brick_height};
       DrawRectangleRec(brick_rect, level->bricks[i].color);
-      DrawRectangleLines(brick_rect.x, brick_rect.y, brick_rect.width, brick_rect.height, BLACK);
+      DrawRectangleLines(brick_rect.x, brick_rect.y, brick_rect.width,
+                         brick_rect.height, BLACK);
     }
   }
 }
 
 // Read in the file and return a pointer to the buffer
-static char *ReadLevelFile(const char *filename)
-{
+static char *ReadLevelFile(const char *filename) {
   FILE *file_ptr = NULL;
   char *buffer;
   long numbytes;
@@ -69,8 +68,7 @@ static char *ReadLevelFile(const char *filename)
   int err = (file_ptr == NULL) ? errno : 0;
 #endif
 
-  if (err != 0)
-  {
+  if (err != 0) {
     // If an error occurred, file_ptr is guaranteed to be NULL
     char err_msg[80];
 
@@ -94,8 +92,7 @@ static char *ReadLevelFile(const char *filename)
   // Grab sufficient memory for the buffer to hld the text
   buffer = (char *)calloc(numbytes, sizeof(char));
 
-  if (buffer == NULL)
-  {
+  if (buffer == NULL) {
     return NULL;
   }
 
@@ -111,8 +108,7 @@ static char *ReadLevelFile(const char *filename)
   return buffer;
 }
 
-static int GetLevel(Game *game, const char *const breakout_levels)
-{
+static int GetLevel(Game *game, const char *const breakout_levels) {
   const cJSON *level = NULL;
   const cJSON *levels = NULL;
   const cJSON *bricks = NULL;
@@ -123,11 +119,9 @@ static int GetLevel(Game *game, const char *const breakout_levels)
   int status = 0;
 
   cJSON *root = cJSON_Parse(breakout_levels);
-  if (root == NULL)
-  {
+  if (root == NULL) {
     const char *error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL)
-    {
+    if (error_ptr != NULL) {
       fprintf(stderr, "Error before: %s\n", error_ptr);
     }
     return status;
@@ -139,14 +133,11 @@ static int GetLevel(Game *game, const char *const breakout_levels)
 
   // Find the current level
   bool levelFound = false;
-  cJSON_ArrayForEach(levels, levels)
-  {
+  cJSON_ArrayForEach(levels, levels) {
     level = cJSON_GetObjectItemCaseSensitive(levels, "level");
 
-    if (cJSON_IsString(level) && (level->valuestring != NULL))
-    {
-      if (atoi(level->valuestring) == game->level->levelNumber)
-      {
+    if (cJSON_IsString(level) && (level->valuestring != NULL)) {
+      if (atoi(level->valuestring) == game->level->levelNumber) {
         printf("Level found!\n");
         levelFound = true;
         break;
@@ -155,28 +146,26 @@ static int GetLevel(Game *game, const char *const breakout_levels)
     index++;
   }
 
-  if (!levelFound)
-  {
+  if (!levelFound) {
     cJSON_Delete(root);
     return 0;
   }
 
   bricks = cJSON_GetArrayItem(levels, 1);
   // if (bricks == NULL || !cJSON_IsArray(bricks))
-  if (bricks == NULL)
-  {
+  if (bricks == NULL) {
     cJSON_Delete(root);
     return status;
   }
 
   game->level->brickCount = cJSON_GetArraySize(bricks);
 
-  game->level->bricks = (Brick*)malloc(game->level->brickCount * sizeof(Brick));
+  game->level->bricks =
+      (Brick *)malloc(game->level->brickCount * sizeof(Brick));
 
   // Get all bricks
   Brick *current_brick = game->level->bricks;
-  cJSON_ArrayForEach(bricks, bricks)
-  {
+  cJSON_ArrayForEach(bricks, bricks) {
     cJSON *row;
     cJSON *col;
     cJSON *color;
@@ -185,14 +174,15 @@ static int GetLevel(Game *game, const char *const breakout_levels)
     col = cJSON_GetObjectItemCaseSensitive(bricks, "col");
     color = cJSON_GetObjectItemCaseSensitive(bricks, "color");
 
-    printf("row %d, col %d, color %s\n", row->valueint, col->valueint, color->valuestring);
+    printf("row %d, col %d, color %s\n", row->valueint, col->valueint,
+           color->valuestring);
     // current_brick = (Brick*)malloc(sizeof(Brick));
-    *current_brick = (Brick) {
-      .pos = (Vector2){ .x = (float)col->valueint, .y = (float)row->valueint },
-      .color = HexColorStringToColor(color->valuestring),
-      .health = 1,
-      .points = 100,
-      .isActive = true,
+    *current_brick = (Brick){
+        .pos = (Vector2){.x = (float)col->valueint, .y = (float)row->valueint},
+        .color = HexColorStringToColor(color->valuestring),
+        .health = 1,
+        .points = 100,
+        .isActive = true,
     };
 
     current_brick++;
@@ -204,7 +194,7 @@ static int GetLevel(Game *game, const char *const breakout_levels)
 }
 
 void ClearLevel(Level *level) {
-  if(level->bricks) {
+  if (level->bricks) {
     free(level->bricks);
   }
   level->brickCount = 0;
@@ -213,12 +203,12 @@ void ClearLevel(Level *level) {
 }
 
 static Color HexColorStringToColor(char *hex_str) {
-  Color color = (Color){ 0, 0, 0 , 0 };
+  Color color = (Color){0, 0, 0, 0};
   unsigned int r, g, b;
 
-    if (hex_str && sscanf_s(hex_str, "#%02x%02x%02x", &r, &g, &b) == 3) {
-        color = (Color){ (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
-    }
+  if (hex_str && sscanf_s(hex_str, "#%02x%02x%02x", &r, &g, &b) == 3) {
+    color = (Color){(unsigned char)r, (unsigned char)g, (unsigned char)b, 255};
+  }
 
   return color;
 }
