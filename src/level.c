@@ -15,12 +15,14 @@ const char *json_file = "resources/breakout_levels.json";
 static char *ReadLevelFile(const char *filename);
 static int GetLevel(Game *game, const char *const breakout_levels);
 
-void LoadLevel(Game *game) {
+void LoadLevel(Game *game)
+{
   // Load breakout_levels.json
 
   char *buffer = ReadLevelFile(json_file);
 
-  if (buffer == NULL) {
+  if (buffer == NULL)
+  {
     fprintf(stderr, "Unable to read the JSON file\n");
     return;
   }
@@ -31,7 +33,8 @@ void LoadLevel(Game *game) {
 }
 
 // Read in the file and return a pointer to the buffer
-static char *ReadLevelFile(const char *filename) {
+static char *ReadLevelFile(const char *filename)
+{
   FILE *file_ptr = NULL;
   char *buffer;
   long numbytes;
@@ -44,7 +47,8 @@ static char *ReadLevelFile(const char *filename) {
   int err = (file_ptr == NULL) ? errno : 0;
 #endif
 
-  if (err != 0) {
+  if (err != 0)
+  {
     // If an error occurred, file_ptr is guaranteed to be NULL
     char err_msg[80];
 
@@ -68,15 +72,18 @@ static char *ReadLevelFile(const char *filename) {
   // Grab sufficient memory for the buffer to hld the text
   buffer = (char *)calloc(numbytes, sizeof(char));
 
-  if (buffer == NULL) {
+  if (buffer == NULL)
+  {
     return NULL;
   }
 
   // Copy all the text into the buffer
   fread(buffer, sizeof(char), numbytes, file_ptr);
 
+#ifdef DEBUG
   // Confirm we have read the file by outputing it to the console
-  //   printf("The file contains this text\n\n%s", buffer);
+  printf("The file contains this text\n\n%s", buffer);
+#endif // DEBUG
 
   // Always close the file pointer when finished
   fclose(file_ptr);
@@ -84,7 +91,8 @@ static char *ReadLevelFile(const char *filename) {
   return buffer;
 }
 
-static int GetLevel(Game *game, const char *const breakout_levels) {
+static int GetLevel(Game *game, const char *const breakout_levels)
+{
   const cJSON *level;
   const cJSON *levels;
   const cJSON *bricks;
@@ -95,9 +103,11 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
 
   int status = 0;
   cJSON *root = cJSON_Parse(breakout_levels);
-  if (root == NULL) {
+  if (root == NULL)
+  {
     const char *error_ptr = cJSON_GetErrorPtr();
-    if (error_ptr != NULL) {
+    if (error_ptr != NULL)
+    {
       fprintf(stderr, "Error before: %s\n", error_ptr);
     }
     status = 0;
@@ -108,12 +118,15 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
   levels = cJSON_GetObjectItemCaseSensitive(root, "levels");
   levelCount = cJSON_GetArraySize(levels);
 
-  // Find "Level 1"
-  cJSON_ArrayForEach(levels, levels) {
+  // Find the current level
+  cJSON_ArrayForEach(levels, levels)
+  {
     level = cJSON_GetObjectItemCaseSensitive(levels, "level");
 
-    if (cJSON_IsString(level) && (level->valuestring != NULL)) {
-      if (atoi(level->valuestring) == game->level->levelNumber) {
+    if (cJSON_IsString(level) && (level->valuestring != NULL))
+    {
+      if (atoi(level->valuestring) == game->level->levelNumber)
+      {
         printf("Level found!\n");
         goto bricks;
       }
@@ -122,27 +135,24 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
   }
 
 bricks:
-//   bricks = cJSON_GetObjectItemCaseSensitive(level, "bricks");
   bricks = cJSON_GetArrayItem(levels, 1);
-  brickCount = cJSON_GetArraySize(bricks);
+  game->level->blockCount = cJSON_GetArraySize(bricks);
+
+  // game->level->blocks = 
 
   // Get all bricks
-  cJSON_ArrayForEach(bricks, bricks) {
+  cJSON_ArrayForEach(bricks, bricks)
+  {
     cJSON *row;
     cJSON *col;
     cJSON *color;
-
-    // brick = cJSON_GetArrayItem(bricks, 0);
 
     row = cJSON_GetObjectItemCaseSensitive(bricks, "row");
     col = cJSON_GetObjectItemCaseSensitive(bricks, "col");
     color = cJSON_GetObjectItemCaseSensitive(bricks, "color");
 
     printf("row %d, col %d, color %s\n", row->valueint, col->valueint, color->valuestring);
-
-
   }
-
 
 end:
   cJSON_Delete(root);
