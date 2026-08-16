@@ -63,6 +63,6 @@ void PaddleUpdate(Paddle *paddle) {
   }
 }
 
-void PaddleRender(Paddle paddle) {
-  DrawRectangleRec(paddle.rect, PADDLE_COLOR);
+void PaddleRender(Paddle *paddle) {
+  DrawRectangleRec(paddle->rect, PADDLE_COLOR);
 }
