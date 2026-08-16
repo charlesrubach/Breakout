@@ -40,7 +40,7 @@ void GameInit(Game *game) {
         WindowShouldClose();
     } else {
         game->level->levelNumber = 1;
-        LoadLevel(game);
+        LevelLoad(game);
     }
 }
 
@@ -67,6 +67,7 @@ void GameUpdate(Game *game) {
         case SHOW_GAMEPLAY:
             // Update gameplay logic here
             PaddleUpdate(game->paddle);
+            LevelUpdate(game->level);
             break;
         case SHOW_ENDING:
             // Update ending screen logic here
@@ -91,7 +92,8 @@ void GameRender(Game *game) {
             TitleRender(game);
             break;
         case SHOW_GAMEPLAY:
-            PaddleRender(*game->paddle);
+            PaddleRender(game->paddle);
+            LevelRender(game->level);
             break;
         case SHOW_ENDING:
             // DrawText("ENDING SCREEN", 20, 20, 40, LIGHTGRAY);
