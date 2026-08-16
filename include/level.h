@@ -1,7 +1,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "block.h"
+#include "brick.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,15 +12,18 @@ typedef struct Game Game;
 // Level definitions here
 typedef struct Level {
     int levelNumber;
-    int blockCount;
+    int brickCount;
     int rows;
     int columns;
-    Block **blocks; // Pointer to an array of Block pointers
+    int brick_width;
+    int brick_height;
+    Brick *bricks; // Pointer to an array of Bricks
 } Level;
 
-void LoadLevel(Game *game);
-void UpdateLevel(Level *level);
-void RenderLevel(Level *level);
+void LevelLoad(Game *game);
+void LevelUpdate(Level *level);
+void LevelRender(Level *level);
+void LevelClear(Level *level);
 
 #ifdef __cplusplus
 }
