@@ -14,6 +14,6 @@ typedef struct Paddle {
 
 void PaddleInit(Paddle *paddle);
 void PaddleUpdate(Paddle *paddle);
-void PaddleRender(Paddle paddle);
+void PaddleRender(Paddle *paddle);
 
 #endif
