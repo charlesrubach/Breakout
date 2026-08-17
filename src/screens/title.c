@@ -39,6 +39,10 @@ void TitleInit(Game *game) {
   game->title->highScores.position = (Vector2){screenCenterX - game->title->highScores.textSize.x / 2, currentY};
   currentY += game->title->highScores.textSize.y;
 
+  game->title->shop.textSize = MeasureTextEx(font, "Shop", fontSize, 1);
+  game->title->shop.position = (Vector2){screenCenterX - game->title->shop.textSize.x / 2, currentY};
+  currentY += game->title->shop.textSize.y;
+
   game->title->options.textSize = MeasureTextEx(font, "Options", fontSize, 1);
   game->title->options.position = (Vector2){screenCenterX - game->title->options.textSize.x / 2, currentY};
   currentY += game->title->options.textSize.y;
@@ -72,6 +76,10 @@ void TitleRender(Game *game) {
   DrawTextEx(font, "High Scores", game->title->highScores.position, fontSize, 1, BLACK);
   currentY += game->title->highScores.textSize.y;
 
+  // Draw "Shop" text
+  DrawTextEx(font, "Shop", game->title->shop.position, fontSize, 1, BLACK);
+  currentY += game->title->shop.textSize.y;
+
   // Draw "Options" text
   DrawTextEx(font, "Options", game->title->options.position, fontSize, 1, BLACK);
   currentY += game->title->options.textSize.y;
@@ -90,6 +98,10 @@ void TitleRender(Game *game) {
     case TITLE_HIGHSCORES:
       menuPosition = &game->title->highScores.position;
       menuSize = &game->title->highScores.textSize;
+      break;
+   case TITLE_SHOP:
+      menuPosition = &game->title->shop.position;
+      menuSize = &game->title->shop.textSize;
       break;
     case TITLE_OPTIONS:
       menuPosition = &game->title->options.position;
