@@ -1,15 +1,16 @@
 #include "paddle.h"
 #include "config.h"
+#include "game.h"
 
 const float PADDLE_WIDTH = 100.0f;
 const float PADDLE_HEIGHT = 20.0f;
 const float PADDLE_ACCELERATION = 800.0f;
 const float PADDLE_DECELERATION = 1200.0f;
-const float PADDLE_Y_OFFSET =
-    PADDLE_HEIGHT; // Distance from the bottom of the screen
-const Color PADDLE_COLOR = BLUE;
+const float PADDLE_Y_OFFSET = PADDLE_HEIGHT; // Distance from the bottom of the screen
+const Color PADDLE_COLOR = BLACK;
 
-void PaddleInit(Paddle *paddle) {
+void PaddleInit(Game *game) {
+  Paddle *paddle = game->paddle;
   paddle->rect.x = (float)(SCREEN_WIDTH - PADDLE_WIDTH) /
                    2; // Center the paddle horizontally
   paddle->rect.y = (float)(SCREEN_HEIGHT - PADDLE_HEIGHT -
@@ -17,12 +18,16 @@ void PaddleInit(Paddle *paddle) {
   paddle->rect.width = PADDLE_WIDTH;
   paddle->rect.height = PADDLE_HEIGHT;
   paddle->velocity = 0.0f;
-  paddle->acceleration = PADDLE_ACCELERATION * PADDLE_WIDTH / paddle->rect.width;
-  paddle->deceleration = PADDLE_DECELERATION * PADDLE_WIDTH / paddle->rect.width;
+  paddle->acceleration =
+      PADDLE_ACCELERATION * PADDLE_WIDTH / paddle->rect.width;
+  paddle->deceleration =
+      PADDLE_DECELERATION * PADDLE_WIDTH / paddle->rect.width;
   paddle->direction = 0; // No movement initially
+  paddle->color = PADDLE_COLOR;
 }
 
-void PaddleUpdate(Paddle *paddle) {
+void PaddleUpdate(Game *game) {
+  Paddle *paddle = game->paddle;
   float dt = GetFrameTime(); // Get the time elapsed since the last frame
 
   if (IsKeyDown(KEY_LEFT)) {
@@ -63,6 +68,7 @@ void PaddleUpdate(Paddle *paddle) {
   }
 }
 
-void PaddleRender(Paddle *paddle) {
-  DrawRectangleRec(paddle->rect, PADDLE_COLOR);
+void PaddleRender(Game *game) {
+  Paddle *paddle = game->paddle;
+  DrawRectangleRec(paddle->rect, paddle->color);
 }
