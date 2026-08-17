@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-typedef enum TitleState { TITLE_START, TITLE_HIGHSCORES, TITLE_OPTIONS, TITLE_EXIT, TITLE_TOTAL_STATES} TitleState;
+typedef enum TitleState { TITLE_START, TITLE_HIGHSCORES, TITLE_SHOP, TITLE_OPTIONS, TITLE_EXIT, TITLE_TOTAL_STATES} TitleState;
 
 typedef struct TextPosition {
     Vector2 textSize;
@@ -18,7 +18,7 @@ typedef struct TextPosition {
 typedef struct Title {
     TitleState state; // Current state of the title screen
     Vector2 v1, v2, v3; // Vertices for the triangle cursor
-    TextPosition breakout,start, highScores, options, exit; // Positions for menu items
+    TextPosition breakout, start, highScores, shop, options, exit; // Positions for menu items
 } Title;
 
 void TitleInit(Game *game);
