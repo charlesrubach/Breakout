@@ -9,8 +9,11 @@ extern "C" {
 
 typedef struct Game Game;
 
+#define LEVEL_STARTING_LEVEL  1
+
 // Level definitions here
 typedef struct Level {
+    char *buffer;
     int levelNumber;
     int brickCount;
     int rows;
@@ -21,9 +24,9 @@ typedef struct Level {
 } Level;
 
 void LevelLoad(Game *game);
-void LevelUpdate(Level *level);
-void LevelRender(Level *level);
-void LevelClear(Level *level);
+void LevelUpdate(Game *game);
+void LevelRender(Game *game);
+void LevelClear(Game *game);
 
 #ifdef __cplusplus
 }
