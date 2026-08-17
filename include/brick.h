@@ -12,7 +12,7 @@ extern "C" {
 #define BRICK_ROWS      6
 
 typedef struct Brick {
-    Vector2 pos;
+    Rectangle rect;
     Color color;
     int health; // Number of hits the block can take before being destroyed
     int points; // Points awarded for destroying the block
