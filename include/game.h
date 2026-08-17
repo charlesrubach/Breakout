@@ -22,7 +22,7 @@ typedef struct Game {
     Logo *logo;
     Title *title;
     Paddle *paddle; // Pointer to the Paddle struct
-    Ball **ball; // Pointer to the Ball array 
+    Ball *ball; // Pointer to the Ball array 
     Level *level;
 } Game;
 
