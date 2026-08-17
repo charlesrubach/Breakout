@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 
+typedef struct Game Game;
+
 typedef struct Paddle {
     Rectangle rect;
     float velocity;
@@ -12,8 +14,8 @@ typedef struct Paddle {
     Color color;
 } Paddle;
 
-void PaddleInit(Paddle *paddle);
-void PaddleUpdate(Paddle *paddle);
-void PaddleRender(Paddle *paddle);
+void PaddleInit(Game *game);
+void PaddleUpdate(Game *game);
+void PaddleRender(Game *game);
 
 #endif
