@@ -16,40 +16,40 @@
 
 const char *json_file = "resources/breakout_levels.json";
 
+// Private functions
+static int GetLevel(Level *level);
 static char *ReadLevelFile(const char *filename);
-static int GetLevel(Game *game, const char *const breakout_levels);
 static Color HexColorStringToColor(char *hex_str);
 
 void LevelLoad(Game *game) {
   // Load breakout_levels.json
+  Level *level = game->level;
 
-  char *buffer = ReadLevelFile(json_file);
+  level->buffer = ReadLevelFile(json_file);
 
-  if (buffer == NULL) {
+  if (level->buffer == NULL) {
     fprintf(stderr, "Unable to read the JSON file\n");
     return;
   }
 
-  game->level->brick_width = SCREEN_WIDTH / BRICK_COLUMNS;
-  game->level->brick_height = SCREEN_HEIGHT / 2 / BRICK_ROWS;
+  level->brick_width = SCREEN_WIDTH / BRICK_COLUMNS;
+  level->brick_height = SCREEN_HEIGHT / 4 / BRICK_ROWS;
 
-  GetLevel(game, buffer);
+  GetLevel(level);
 
-  free(buffer);
+  free(level->buffer);
 }
 
-void LevelUpdate(Level *level) {}
+void LevelUpdate(Game *game) { Level *level = game->level; }
 
-void LevelRender(Level *level) {
+void LevelRender(Game *game) {
+  Level *level = game->level;
+
   for (int i = 0; i < level->brickCount; i++) {
     if (level->bricks[i].isActive) {
-      Rectangle brick_rect =
-          (Rectangle){level->bricks[i].pos.x * level->brick_width,
-                      level->bricks[i].pos.y * level->brick_height,
-                      (float)level->brick_width, (float)level->brick_height};
-      DrawRectangleRec(brick_rect, level->bricks[i].color);
-      DrawRectangleLines(brick_rect.x, brick_rect.y, brick_rect.width,
-                         brick_rect.height, BLACK);
+      DrawRectangleRec(level->bricks[i].rect, level->bricks[i].color);
+      DrawRectangleLines(level->bricks[i].rect.x, level->bricks[i].rect.y, level->bricks[i].rect.width,
+                         level->bricks[i].rect.height, BLACK);
     }
   }
 }
@@ -108,17 +108,17 @@ static char *ReadLevelFile(const char *filename) {
   return buffer;
 }
 
-static int GetLevel(Game *game, const char *const breakout_levels) {
-  const cJSON *level = NULL;
-  const cJSON *levels = NULL;
-  const cJSON *bricks = NULL;
-  const cJSON *brick = NULL;
+static int GetLevel(Level *level) {
+  const cJSON *cjson_level = NULL;
+  const cJSON *cjson_levels = NULL;
+  const cJSON *cjson_bricks = NULL;
+  const cJSON *cjson_brick = NULL;
   int levelCount = 0;
   int brickCount = 0;
   int index = 0;
   int status = 0;
 
-  cJSON *root = cJSON_Parse(breakout_levels);
+  cJSON *root = cJSON_Parse(level->buffer);
   if (root == NULL) {
     const char *error_ptr = cJSON_GetErrorPtr();
     if (error_ptr != NULL) {
@@ -128,16 +128,16 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
   }
 
   // Get "levels" array
-  levels = cJSON_GetObjectItemCaseSensitive(root, "levels");
-  levelCount = cJSON_GetArraySize(levels);
+  cjson_levels = cJSON_GetObjectItemCaseSensitive(root, "levels");
+  levelCount = cJSON_GetArraySize(cjson_levels);
 
   // Find the current level
   bool levelFound = false;
-  cJSON_ArrayForEach(levels, levels) {
-    level = cJSON_GetObjectItemCaseSensitive(levels, "level");
+  cJSON_ArrayForEach(cjson_levels, cjson_levels) {
+    cjson_level = cJSON_GetObjectItemCaseSensitive(cjson_levels, "level");
 
-    if (cJSON_IsString(level) && (level->valuestring != NULL)) {
-      if (atoi(level->valuestring) == game->level->levelNumber) {
+    if (cJSON_IsString(cjson_level) && (cjson_level->valuestring != NULL)) {
+      if (atoi(cjson_level->valuestring) == level->levelNumber) {
         printf("Level found!\n");
         levelFound = true;
         break;
@@ -151,34 +151,38 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
     return 0;
   }
 
-  bricks = cJSON_GetArrayItem(levels, 1);
+  cjson_bricks = cJSON_GetArrayItem(cjson_levels, 1);
   // if (bricks == NULL || !cJSON_IsArray(bricks))
-  if (bricks == NULL) {
+  if (cjson_bricks == NULL) {
     cJSON_Delete(root);
     return status;
   }
 
-  game->level->brickCount = cJSON_GetArraySize(bricks);
+  level->brickCount = cJSON_GetArraySize(cjson_bricks);
 
-  game->level->bricks =
-      (Brick *)malloc(game->level->brickCount * sizeof(Brick));
+  level->bricks = (Brick *)malloc(level->brickCount * sizeof(Brick));
 
   // Get all bricks
-  Brick *current_brick = game->level->bricks;
-  cJSON_ArrayForEach(bricks, bricks) {
+  Brick *current_brick = level->bricks;
+  cJSON_ArrayForEach(cjson_bricks, cjson_bricks) {
     cJSON *row;
     cJSON *col;
     cJSON *color;
 
-    row = cJSON_GetObjectItemCaseSensitive(bricks, "row");
-    col = cJSON_GetObjectItemCaseSensitive(bricks, "col");
-    color = cJSON_GetObjectItemCaseSensitive(bricks, "color");
+    row = cJSON_GetObjectItemCaseSensitive(cjson_bricks, "row");
+    col = cJSON_GetObjectItemCaseSensitive(cjson_bricks, "col");
+    color = cJSON_GetObjectItemCaseSensitive(cjson_bricks, "color");
 
     printf("row %d, col %d, color %s\n", row->valueint, col->valueint,
            color->valuestring);
     // current_brick = (Brick*)malloc(sizeof(Brick));
     *current_brick = (Brick){
-        .pos = (Vector2){.x = (float)col->valueint, .y = (float)row->valueint},
+        // .pos = (Vector2){.x = (float)col->valueint, .y =
+        // (float)row->valueint},
+        .rect = (Rectangle){.x = (float)(col->valueint * level->brick_width),
+                            .y = (float)(row->valueint * level->brick_height),
+                            (float)level->brick_width,
+                            (float)level->brick_height},
         .color = HexColorStringToColor(color->valuestring),
         .health = 1,
         .points = 100,
@@ -193,7 +197,9 @@ static int GetLevel(Game *game, const char *const breakout_levels) {
   return status;
 }
 
-void ClearLevel(Level *level) {
+void ClearLevel(Game *game) {
+  Level *level = game->level;
+
   if (level->bricks) {
     free(level->bricks);
   }
